@@ -3,9 +3,9 @@ package com.github.kongchen.smp.integration;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kongchen.swagger.docgen.mavenplugin.ApiDocumentMojo;
-import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
-import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
+import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
 import net.javacrumbs.jsonunit.core.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,12 +27,12 @@ public class SpringMvcSkipInheritedTest extends AbstractMojoTestCase {
     private File swaggerOutputDir = new File(getBasedir(), "generated/swagger-ui-spring-skip-inherited");
     private File docOutput = new File(getBasedir(), "generated/document-spring-skip-inherited.html");
     private ApiDocumentMojo mojo;
-    private List<SwaggerExtension> extensions;
+    private List<OpenAPIExtension> extensions;
 
     @Override
 	@BeforeMethod
     protected void setUp() throws Exception {
-    	extensions = new ArrayList<SwaggerExtension>(SwaggerExtensions.getExtensions());
+    	extensions = new ArrayList<>(OpenAPIExtensions.getExtensions());
     	super.setUp();
 
         try {
@@ -50,7 +50,7 @@ public class SpringMvcSkipInheritedTest extends AbstractMojoTestCase {
     @AfterMethod
     protected void tearDown() throws Exception {
     	super.tearDown();
-    	SwaggerExtensions.setExtensions(extensions);
+        OpenAPIExtensions.setExtensions(extensions);
     }
    
     @Test
