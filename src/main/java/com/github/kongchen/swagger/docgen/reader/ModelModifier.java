@@ -3,12 +3,12 @@ package com.github.kongchen.swagger.docgen.reader;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.kongchen.swagger.docgen.GenerateException;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.jackson.ModelResolver;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
+import io.swagger.v3.core.annotations.ApiModelProperty;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.models.Model;
+import io.swagger.v3.core.models.properties.Property;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;

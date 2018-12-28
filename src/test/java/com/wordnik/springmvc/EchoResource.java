@@ -1,7 +1,7 @@
 package com.wordnik.springmvc;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 @Api(value = "/echo", description = "Set of simple endpoints that return whatever value you pass in")

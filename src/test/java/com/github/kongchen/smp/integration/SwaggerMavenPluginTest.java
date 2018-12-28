@@ -8,9 +8,9 @@ import com.github.kongchen.smp.integration.utils.PetIdToStringModelConverter;
 import com.github.kongchen.swagger.docgen.mavenplugin.ApiDocumentMojo;
 import com.github.kongchen.swagger.docgen.mavenplugin.ApiSource;
 import com.google.common.collect.ImmutableList;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.util.Json;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
+import io.swagger.v3.core.util.Json;
 import net.javacrumbs.jsonunit.core.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -280,9 +280,9 @@ public class SwaggerMavenPluginTest extends AbstractMojoTestCase {
         mojo.getApiSources().get(0).setOutputFormats("yaml");
         mojo.execute();
 
-        String actualYaml = io.swagger.util.Yaml.pretty().writeValueAsString(
+        String actualYaml = io.swagger.v3.core.util.Yaml.pretty().writeValueAsString(
                 new Yaml().load(FileUtils.readFileToString(new File(swaggerOutputDir, "swagger.yaml"))));
-        String expectYaml = io.swagger.util.Yaml.pretty().writeValueAsString(
+        String expectYaml = io.swagger.v3.core.util.Yaml.pretty().writeValueAsString(
                 new Yaml().load(this.getClass().getResourceAsStream(expectedOutput)));
 
         JsonNode actualJson = mapper.readTree(YamlToJson(actualYaml));

@@ -3,7 +3,7 @@ package com.wordnik.springmvc;
 import com.github.kongchen.swagger.docgen.GenerateException;
 import com.github.kongchen.swagger.docgen.reader.SpringMvcApiReader;
 import com.github.kongchen.swagger.docgen.spring.SpringResource;
-import io.swagger.models.Swagger;
+import io.swagger.v3.core.models.Swagger;
 
 import java.util.Map;
 import java.util.Set;

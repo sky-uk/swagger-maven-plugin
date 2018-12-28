@@ -2,7 +2,7 @@ package com.wordnik.jaxrs;
 
 import com.wordnik.sample.model.ListItem;
 import com.wordnik.sample.model.Pet;
-import io.swagger.annotations.*;
+import io.swagger.v3.core.annotations.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PathParam;

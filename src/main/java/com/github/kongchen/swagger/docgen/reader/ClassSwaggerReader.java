@@ -1,7 +1,7 @@
 package com.github.kongchen.swagger.docgen.reader;
 
 import com.github.kongchen.swagger.docgen.GenerateException;
-import io.swagger.models.Swagger;
+import io.swagger.v3.core.models.Swagger;
 
 import java.util.Set;
 

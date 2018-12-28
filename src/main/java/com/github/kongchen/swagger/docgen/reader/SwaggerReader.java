@@ -6,8 +6,8 @@ import org.apache.maven.plugin.logging.Log;
 
 import com.github.kongchen.swagger.docgen.GenerateException;
 
-import io.swagger.jaxrs.Reader;
-import io.swagger.models.Swagger;
+import io.swagger.v3.core.jaxrs.Reader;
+import io.swagger.v3.core.models.Swagger;
 
 /**
  * This API reader is directly using the swagger internal {@link Reader} to scan the classes.

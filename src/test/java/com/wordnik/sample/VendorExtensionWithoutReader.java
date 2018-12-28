@@ -7,10 +7,10 @@ import java.util.Map;
 
 import com.wordnik.sample.TestVendorExtension.TestVendorAnnotation;
 
-import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.models.Operation;
-import io.swagger.models.Response;
+import io.swagger.v3.core.jaxrs.ext.AbstractSwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.models.Operation;
+import io.swagger.v3.core.models.Response;
 
 /**
  * Custom swagger extension which will be configured using the <code>&lt;swaggerExtension&gt;</code> tag.

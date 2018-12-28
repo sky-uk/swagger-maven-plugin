@@ -2,7 +2,7 @@ package com.wordnik.jaxrs;
 
 import com.wordnik.sample.exception.NotFoundException;
 import com.wordnik.sample.model.ListItem;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiParam;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;

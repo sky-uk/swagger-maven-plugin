@@ -1,8 +1,8 @@
 package com.wordnik.springmvc;
 
 import com.wordnik.sample.model.ListItem;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 

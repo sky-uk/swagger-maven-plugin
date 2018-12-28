@@ -17,21 +17,24 @@ import com.github.kongchen.swagger.docgen.mavenplugin.SecurityDefinition;
 import com.github.kongchen.swagger.docgen.reader.AbstractReader;
 import com.github.kongchen.swagger.docgen.reader.ClassSwaggerReader;
 import com.github.kongchen.swagger.docgen.reader.ModelModifier;
-import io.swagger.annotations.Api;
-import io.swagger.config.FilterFactory;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverters;
-import io.swagger.core.filter.SpecFilter;
-import io.swagger.core.filter.SwaggerSpecFilter;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.models.Path;
-import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
-import io.swagger.models.auth.SecuritySchemeDefinition;
-import io.swagger.models.properties.Property;
-import io.swagger.util.Json;
-import io.swagger.util.Yaml;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.config.FilterFactory;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.core.filter.SpecFilter;
+import io.swagger.v3.core.core.filter.SwaggerSpecFilter;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
+import io.swagger.v3.core.models.Path;
+import io.swagger.v3.core.models.Scheme;
+
+import io.swagger.v3.core.models.auth.SecuritySchemeDefinition;
+import io.swagger.v3.core.models.properties.Property;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.SecuritySchemeDeserializer;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -55,7 +58,7 @@ public abstract class AbstractDocumentSource {
     protected final ApiSource apiSource;
     protected final Log LOG;
     protected final List<Type> typesToSkip = new ArrayList<Type>();
-    protected Swagger swagger;
+    protected OpenAPI swagger;
     protected String swaggerSchemaConverter;
     private final String outputPath;
     private final String templatePath;
@@ -74,10 +77,18 @@ public abstract class AbstractDocumentSource {
         this.modelSubstitute = apiSource.getModelSubstitute();
         this.jsonExampleValues = apiSource.isJsonExampleValues();
 
-        swagger = new Swagger();
+        swagger = new OpenAPI();
+        for (SecurityDefinition securityDefinition : apiSource.getSecurityDefinitions()) {
+            for (Map.Entry<String, SecuritySchemeDefinition> scheme : securityDefinition.generateSecuritySchemeDefinitions().entrySet()) {
+                swagger.schemaRequirement(scheme.getKey(), scheme.getValue());
+            }
+        }
         if (apiSource.getSchemes() != null) {
             for (String scheme : apiSource.getSchemes()) {
                 swagger.scheme(Scheme.forValue(scheme));
+                SecurityScheme securityScheme = securitySchemeDeserializer.des;
+                securityScheme = new SecurityScheme();
+                swagger.schemaRequirement(scheme, securityScheme);
             }
         }
 
@@ -114,7 +125,7 @@ public abstract class AbstractDocumentSource {
         swagger = doFilter(swagger);
     }
 
-    private Swagger doFilter(Swagger swagger) throws GenerateException {
+    private OpenAPI doFilter(OpenAPI swagger) throws GenerateException {
         String filterClassName = apiSource.getSwaggerInternalFilter();
         if (filterClassName != null) {
             try {
@@ -137,8 +148,8 @@ public abstract class AbstractDocumentSource {
                 new HashMap<String, List<String>>());
     }
 
-    private Swagger addSecurityDefinitions(final Swagger swagger, ApiSource apiSource) throws GenerateException {
-        Swagger result = swagger;
+    private OpenAPI addSecurityDefinitions(final OpenAPI swagger, ApiSource apiSource) throws GenerateException {
+        OpenAPI result = swagger;
         if (apiSource.getSecurityDefinitions() == null) {
             return result;
         }
@@ -305,24 +316,6 @@ public abstract class AbstractDocumentSource {
         }
     }
 
-    protected Swagger removeBasePathFromEndpoints(Swagger swagger, boolean removeBasePathFromEndpoints) {
-        Swagger result = swagger;
-        if (!removeBasePathFromEndpoints) {
-            return result;
-        }
-        String basePath = swagger.getBasePath();
-        if (isEmpty(basePath)) {
-            return result;
-        }
-        Map<String, Path> oldPathMap = result.getPaths();
-        Map<String, Path> newPathMap = new HashMap<String, Path>();
-        for (Map.Entry<String, Path> entry: oldPathMap.entrySet()) {
-            newPathMap.put(entry.getKey().replace(basePath, ""), entry.getValue());
-        }
-        result.setPaths(newPathMap);
-        return result;
-    }
-
     protected File createFile(File dir, String outputResourcePath) throws IOException {
         File serviceFile;
         int i = outputResourcePath.lastIndexOf("/");
@@ -448,7 +441,7 @@ public abstract class AbstractDocumentSource {
             LOG.info("Reading custom API reader: " + customReaderClassName);
             Class<?> clazz = Class.forName(customReaderClassName);
             if (AbstractReader.class.isAssignableFrom(clazz)) {
-                Constructor<?> constructor = clazz.getConstructor(Swagger.class, Log.class);
+                Constructor<?> constructor = clazz.getConstructor(OpenAPI.class, Log.class);
                 return (ClassSwaggerReader) constructor.newInstance(swagger, LOG);
             } else {
                 return (ClassSwaggerReader) clazz.newInstance();

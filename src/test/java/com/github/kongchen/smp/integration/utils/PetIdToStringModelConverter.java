@@ -1,10 +1,10 @@
 package com.github.kongchen.smp.integration.utils;
 
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.jackson.AbstractModelConverter;
-import io.swagger.models.properties.Property;
-import io.swagger.util.Json;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.jackson.AbstractModelConverter;
+import io.swagger.v3.core.models.properties.Property;
+import io.swagger.v3.core.util.Json;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

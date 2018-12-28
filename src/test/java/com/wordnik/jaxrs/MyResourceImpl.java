@@ -21,8 +21,8 @@ import com.wordnik.sample.data.PetData;
 import com.wordnik.sample.model.ListItem;
 import com.wordnik.sample.model.Pet;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

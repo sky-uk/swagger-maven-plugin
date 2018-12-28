@@ -3,8 +3,8 @@ package com.github.kongchen.swagger.docgen;
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.jackson.SwaggerAnnotationIntrospector;
+import io.swagger.v3.core.annotations.ApiModel;
+import io.swagger.v3.core.jackson.SwaggerAnnotationIntrospector;
 
 /**
  * Extends SwaggerAnnotationIntrospector with {@link #findRootName(AnnotatedClass)} implementation. See

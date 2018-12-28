@@ -1,6 +1,6 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.models.Swagger;
+import io.swagger.v3.core.models.Swagger;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.Set;

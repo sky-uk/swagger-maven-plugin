@@ -1,11 +1,11 @@
 package com.github.kongchen.swagger.docgen.mavenplugin;
 
 import com.google.common.collect.Sets;
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.Info;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.info.Info;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -28,14 +28,14 @@ public class ApiSourceTest {
     @Test
     public void testGetExternalDocsNoneFound() {
         // given
-        @SwaggerDefinition
+        @OpenAPIDefinition
         class TestClassNoExternalDocs { }
 
         ApiSource apiSource = spy(ApiSource.class);
-        when(apiSource.getValidClasses(SwaggerDefinition.class)).thenReturn(Sets.newHashSet(TestClassNoExternalDocs.class));
+        when(apiSource.getValidClasses(OpenAPIDefinition.class)).thenReturn(Sets.newHashSet(TestClassNoExternalDocs.class));
 
         // when
-        ExternalDocs externalDocs = apiSource.getExternalDocs();
+        ExternalDocumentation externalDocs = apiSource.getExternalDocs();
 
         // then
         Assert.assertNull(externalDocs);
@@ -44,14 +44,14 @@ public class ApiSourceTest {
     @Test
     public void testGetExternalDocsFound() {
         // given
-        @SwaggerDefinition(externalDocs = @io.swagger.annotations.ExternalDocs(value = "Example external docs", url = "https://example.com/docs"))
+        @OpenAPIDefinition(externalDocs = @io.swagger.v3.oas.annotations.ExternalDocumentation(description = "Example external docs", url = "https://example.com/docs"))
         class TestClassExternalDocs { }
 
         ApiSource apiSource = spy(ApiSource.class);
-        when(apiSource.getValidClasses(SwaggerDefinition.class)).thenReturn(Sets.newHashSet(TestClassExternalDocs.class));
+        when(apiSource.getValidClasses(OpenAPIDefinition.class)).thenReturn(Sets.newHashSet(TestClassExternalDocs.class));
 
         // when
-        ExternalDocs externalDocs = apiSource.getExternalDocs();
+        ExternalDocumentation externalDocs = apiSource.getExternalDocs();
 
         // then
         Assert.assertNotNull(externalDocs);
@@ -77,15 +77,15 @@ public class ApiSourceTest {
         Set<Class<?>> validClasses = Sets.newHashSet(ApiSourceTestClass.class);
         ApiSource apiSource = spy(ApiSource.class);
 
-        when(apiSource.getValidClasses(SwaggerDefinition.class)).thenReturn(validClasses);
+        when(apiSource.getValidClasses(OpenAPIDefinition.class)).thenReturn(validClasses);
         Info info = apiSource.getInfo();
 
-        Map<String, Object> vendorExtensions = info.getVendorExtensions();
+        Map<String, Object> vendorExtensions = info.getExtensions();
         Assert.assertEquals(vendorExtensions.size(), 2);
         Assert.assertEquals(vendorExtensions, expectedExtensions);
     }
 
-    @SwaggerDefinition(info = @io.swagger.annotations.Info(
+    @OpenAPIDefinition(info = @io.swagger.v3.oas.annotations.info.Info(
             title = "ApiSourceTestClass",
             version = "1.0.0",
             extensions = {

@@ -1,12 +1,12 @@
 package com.wordnik.jaxrs;
 
 import com.wordnik.sample.model.User;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiResponse;
+import io.swagger.v3.core.annotations.ApiResponses;
+import io.swagger.v3.core.annotations.Authorization;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.GET;

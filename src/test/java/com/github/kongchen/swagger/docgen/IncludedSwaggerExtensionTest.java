@@ -5,9 +5,10 @@ import com.github.kongchen.swagger.docgen.jaxrs.JaxrsParameterExtension;
 import com.github.kongchen.swagger.docgen.reader.JaxrsReader;
 import com.github.kongchen.swagger.docgen.spring.SpringSwaggerExtension;
 import com.google.common.collect.Lists;
-import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.v3.core.jaxrs.ext.AbstractSwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.models.parameters.Parameter;
+import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.testng.annotations.Test;
 
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.*;
  *
  */
 public class IncludedSwaggerExtensionTest {
-    private static final List<AbstractSwaggerExtension> SWAGGER_EXTENSIONS = Lists.newArrayList();
+    private static final List<AbstractOpenAPIExtension> SWAGGER_EXTENSIONS = Lists.newArrayList();
 
     static {
         //TODO: Maybe use a Classpath Scanner to automatically figure out the included extensions?

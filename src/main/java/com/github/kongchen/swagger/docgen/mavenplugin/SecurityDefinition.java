@@ -1,16 +1,25 @@
 package com.github.kongchen.swagger.docgen.mavenplugin;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
+import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import com.github.kongchen.swagger.docgen.GenerateException;
-import io.swagger.models.auth.ApiKeyAuthDefinition;
-import io.swagger.models.auth.BasicAuthDefinition;
-import io.swagger.models.auth.OAuth2Definition;
-import io.swagger.models.auth.SecuritySchemeDefinition;
-import io.swagger.util.Json;
+import io.swagger.v3.core.models.auth.ApiKeyAuthDefinition;
+import io.swagger.v3.core.models.auth.BasicAuthDefinition;
+import io.swagger.v3.core.models.auth.OAuth2Definition;
+import io.swagger.v3.core.models.auth.SecuritySchemeDefinition;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.SecuritySchemeDeserializer;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -22,6 +31,8 @@ import java.util.Map;
  * @author chekong on 15/5/5.
  */
 public class SecurityDefinition {
+    private final SecuritySchemeDeserializer securitySchemeDeserializer = new SecuritySchemeDeserializer();
+
     private String name;
     private String type;
     private String in;
@@ -29,10 +40,12 @@ public class SecurityDefinition {
     private String json;
     private String jsonPath;
 
-    private ObjectMapper mapper = Json.mapper();
+    private ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
-    public Map<String, SecuritySchemeDefinition> generateSecuritySchemeDefinitions() throws GenerateException {
-        Map<String, SecuritySchemeDefinition> map = new HashMap<String, SecuritySchemeDefinition>();
+    private final DeserializationContext deserializationContext = new DefaultDeserializationContext(new BeanDeserializerFactory());
+
+    public Map<String, SecurityScheme> generateSecuritySchemeDefinitions() throws GenerateException {
+        Map<String, SecurityScheme> map = new HashMap<>();
 
         Map<String, JsonNode> securityDefinitions = new HashMap<String, JsonNode>();
         if (json != null || jsonPath != null) {
@@ -40,11 +53,13 @@ public class SecurityDefinition {
         } else {
             JsonNode tree = mapper.valueToTree(this);
             securityDefinitions.put(tree.get("name").asText(), tree);
+
         }
 
         for (Map.Entry<String, JsonNode> securityDefinition : securityDefinitions.entrySet()) {
             JsonNode definition = securityDefinition.getValue();
-            SecuritySchemeDefinition ssd = getSecuritySchemeDefinitionByType(definition.get("type").asText(), definition);
+            securitySchemeDeserializer.deserialize(parser, deserializationContext);
+            SecurityScheme ssd = getSecuritySchemeDefinitionByType(definition.get("type"), definition);
             tryFillNameField(ssd, securityDefinition.getKey());
 
             if (ssd != null) {
@@ -64,7 +79,7 @@ public class SecurityDefinition {
      * @param ssd security scheme
      * @param value value to set the name to
      */
-    private void tryFillNameField(SecuritySchemeDefinition ssd, String value) {
+    private void tryFillNameField(SecurityDefinition ssd, String value) {
         if (ssd == null) {
             return;
         }
@@ -83,7 +98,7 @@ public class SecurityDefinition {
         Map<String, JsonNode> securityDefinitions = new HashMap<String, JsonNode>();
 
         try {
-            InputStream jsonStream = json != null ? this.getClass().getResourceAsStream(json) : new FileInputStream(jsonPath);
+            InputStream jsonStream = getJsonStream();
             JsonNode tree = mapper.readTree(jsonStream);
             Iterator<Map.Entry<String, JsonNode>> fields = tree.fields();
             while(fields.hasNext()) {
@@ -99,9 +114,13 @@ public class SecurityDefinition {
         return securityDefinitions;
     }
 
-    private SecuritySchemeDefinition getSecuritySchemeDefinitionByType(String type, JsonNode node) throws GenerateException {
+    private InputStream getJsonStream() throws FileNotFoundException {
+        return json != null ? this.getClass().getResourceAsStream(json) : new FileInputStream(jsonPath);
+    }
+
+    private SecurityScheme getSecuritySchemeDefinitionByType(String type, JsonNode node) throws GenerateException {
         try {
-            SecuritySchemeDefinition def = null;
+            SecurityScheme def = null;
             if (type.equals(new OAuth2Definition().getType())) {
                 def = new OAuth2Definition();
                 if (node != null) {

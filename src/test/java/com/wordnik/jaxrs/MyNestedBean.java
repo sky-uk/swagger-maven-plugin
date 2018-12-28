@@ -2,7 +2,7 @@ package com.wordnik.jaxrs;
 
 import javax.ws.rs.HeaderParam;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiParam;
 
 /**
  * Represents a {@code @BeanParam} target that is nested within another bean.

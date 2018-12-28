@@ -2,7 +2,7 @@ package com.github.kongchen.swagger.docgen.mavenplugin;
 
 import com.github.kongchen.swagger.docgen.AbstractDocumentSource;
 import com.github.kongchen.swagger.docgen.GenerateException;
-import io.swagger.util.Json;
+import io.swagger.v3.core.util.Json;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -87,15 +87,6 @@ public class ApiDocumentMojo extends AbstractMojo {
 
         if (apiSources == null) {
             throw new MojoFailureException("You must configure at least one apiSources element");
-        }
-        if (useSwaggerSpec11()) {
-            throw new MojoExecutionException("You may use an old version of swagger which is not supported by swagger-maven-plugin 2.0+\n" +
-                    "swagger-maven-plugin 2.0+ only supports swagger-core 1.3.x");
-        }
-
-        if (useSwaggerSpec13()) {
-            throw new MojoExecutionException("You may use an old version of swagger which is not supported by swagger-maven-plugin 3.0+\n" +
-                    "swagger-maven-plugin 3.0+ only supports swagger spec 2.0");
         }
 
         try {
@@ -193,24 +184,6 @@ public class ApiDocumentMojo extends AbstractMojo {
             throw new GenerateException("<locations> is required by this plugin.");
         }
 
-    }
-
-    private boolean useSwaggerSpec11() {
-        try {
-            Class<?> tryClass = Class.forName("com.wordnik.swagger.annotations.ApiErrors");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    private boolean useSwaggerSpec13() {
-        try {
-            Class<?> tryClass = Class.forName("com.wordnik.swagger.model.ApiListing");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     private String getSwaggerFileName(String swaggerFileName) {

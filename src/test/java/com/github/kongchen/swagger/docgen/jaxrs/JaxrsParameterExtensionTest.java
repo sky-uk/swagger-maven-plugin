@@ -2,9 +2,9 @@ package com.github.kongchen.swagger.docgen.jaxrs;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.models.parameters.AbstractSerializableParameter;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.models.parameters.AbstractSerializableParameter;
+import io.swagger.v3.core.models.parameters.Parameter;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.testng.annotations.Test;
 

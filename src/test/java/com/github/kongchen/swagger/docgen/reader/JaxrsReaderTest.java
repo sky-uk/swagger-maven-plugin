@@ -13,7 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.swagger.util.Json;
+import io.swagger.v3.core.util.Json;
 import org.apache.maven.plugin.logging.Log;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,20 +27,20 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Operation;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.HeaderParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.parameters.RefParameter;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiParam;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
+import io.swagger.v3.core.models.ArrayModel;
+import io.swagger.v3.core.models.Operation;
+import io.swagger.v3.core.models.Swagger;
+import io.swagger.v3.core.models.Tag;
+import io.swagger.v3.core.models.parameters.BodyParameter;
+import io.swagger.v3.core.models.parameters.HeaderParameter;
+import io.swagger.v3.core.models.parameters.Parameter;
+import io.swagger.v3.core.models.parameters.QueryParameter;
+import io.swagger.v3.core.models.parameters.RefParameter;
 import net.javacrumbs.jsonunit.JsonAssert;
 
 import static org.testng.Assert.assertEquals;
@@ -113,7 +113,7 @@ public class JaxrsReaderTest {
     @Test
     public void handleOctetStreamAndByteArray() {
         Swagger result = reader.read(AnApiWithOctetStream.class);
-        io.swagger.models.Path path = result.getPaths().get("/apath/add");
+        io.swagger.v3.core.models.Path path = result.getPaths().get("/apath/add");
         assertNotNull(path, "Expecting to find a path ..");
         assertNotNull(path.getPost(), ".. with post opertion ..");
         assertNotNull(path.getPost().getConsumes().contains("application/octet-stream"), ".. and with octect-stream consumer.");
@@ -133,7 +133,7 @@ public class JaxrsReaderTest {
         assertTrue(result.getTags().contains(expectedTag), "Expected tag missing");
         assertFalse(result.getPaths().isEmpty(), "Should contain operation paths");
         assertTrue(result.getPaths().containsKey("/apath"), "Path missing from paths map");
-        io.swagger.models.Path path = result.getPaths().get("/apath");
+        io.swagger.v3.core.models.Path path = result.getPaths().get("/apath");
         assertFalse(path.getOperations().isEmpty(), "Should be a get operation");
     }
 
@@ -196,7 +196,7 @@ public class JaxrsReaderTest {
         assertNotNull(result, "No Swagger object created");
         assertFalse(result.getPaths().isEmpty(), "Should contain operation paths");
         assertTrue(result.getPaths().containsKey(expectedPath), "Expected path missing");
-        io.swagger.models.Path path = result.getPaths().get(expectedPath);
+        io.swagger.v3.core.models.Path path = result.getPaths().get(expectedPath);
         assertFalse(path.getOperations().isEmpty(), "Should be a get operation");
         assertEquals(expectedOperation, path.getGet(), "Should contain operation");
     }

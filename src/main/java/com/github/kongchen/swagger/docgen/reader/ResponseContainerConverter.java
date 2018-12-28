@@ -1,8 +1,8 @@
 package com.github.kongchen.swagger.docgen.reader;
 
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.Property;
+import io.swagger.v3.core.models.properties.ArrayProperty;
+import io.swagger.v3.core.models.properties.MapProperty;
+import io.swagger.v3.core.models.properties.Property;
 
 /**
  * Property wrapper for response container.

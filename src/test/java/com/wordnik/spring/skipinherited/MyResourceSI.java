@@ -1,9 +1,9 @@
 package com.wordnik.spring.skipinherited;
 
 import com.wordnik.sample.model.ListItem;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiParam;
 
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;

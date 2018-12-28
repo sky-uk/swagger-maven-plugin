@@ -1,31 +1,17 @@
 package com.github.kongchen.swagger.docgen.util;
 
-import java.lang.reflect.Type;
+import io.swagger.v3.core.converter.AnnotatedType;
 
-import io.swagger.converter.ModelConverters;
-import io.swagger.models.properties.Property;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
 public class TypeUtils {
 
-    public static boolean isPrimitive(Type cls) {
-        boolean isPrimitive = false;
+    private static final List<String> PRIMITIVE_PROPERTIES = Arrays.asList("integer", "string", "number", "boolean", "array", "file");
 
-        Property property = ModelConverters.getInstance().readAsProperty(cls);
-        if (property == null) {
-            isPrimitive = false;
-        } else if ("integer".equals(property.getType())) {
-            isPrimitive = true;
-        } else if ("string".equals(property.getType())) {
-            isPrimitive = true;
-        } else if ("number".equals(property.getType())) {
-            isPrimitive = true;
-        } else if ("boolean".equals(property.getType())) {
-            isPrimitive = true;
-        } else if ("array".equals(property.getType())) {
-            isPrimitive = true;
-        } else if ("file".equals(property.getType())) {
-            isPrimitive = true;
-        }
-        return isPrimitive;
+    public static boolean isPrimitive(Type cls) {
+        String propertyName = new AnnotatedType().type(cls).getPropertyName();
+        return PRIMITIVE_PROPERTIES.contains(propertyName);
     }
 }

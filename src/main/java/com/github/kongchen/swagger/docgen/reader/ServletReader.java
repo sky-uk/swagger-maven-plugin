@@ -6,8 +6,8 @@ import org.apache.maven.plugin.logging.Log;
 
 import com.github.kongchen.swagger.docgen.GenerateException;
 
-import io.swagger.models.Swagger;
-import io.swagger.servlet.Reader;
+import io.swagger.v3.core.models.Swagger;
+import io.swagger.v3.core.servlet.Reader;
 
 /**
  * A dedicated {@link ClassSwaggerReader} to scan Serlet classes.

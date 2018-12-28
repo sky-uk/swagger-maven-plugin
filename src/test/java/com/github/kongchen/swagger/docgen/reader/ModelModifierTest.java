@@ -2,15 +2,15 @@ package com.github.kongchen.swagger.docgen.reader;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.SimpleType;
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.util.Json;
+import io.swagger.v3.core.annotations.ApiModelProperty;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.models.ArrayModel;
+import io.swagger.v3.core.models.Model;
+import io.swagger.v3.core.models.properties.Property;
+import io.swagger.v3.core.models.properties.StringProperty;
+import io.swagger.v3.core.util.Json;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

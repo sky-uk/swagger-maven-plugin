@@ -1,13 +1,14 @@
 package com.github.kongchen.swagger.docgen.jaxrs;
 
-import com.google.common.base.Strings;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
-import io.swagger.converter.ModelConverters;
-import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.models.parameters.*;
-import io.swagger.models.properties.Property;
+import io.swagger.v3.jaxrs2.ResolvedParameter;
+import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
+import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.*;
 
 import javax.ws.rs.*;
 import java.lang.annotation.Annotation;
@@ -17,23 +18,27 @@ import java.util.*;
 /**
  * @author chekong on 15/5/12.
  */
-public class JaxrsParameterExtension extends AbstractSwaggerExtension {
+public class JaxrsParameterExtension extends AbstractOpenAPIExtension {
 
     @Override
-    public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<SwaggerExtension> chain) {
+    public ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
+                                               Components components, javax.ws.rs.Consumes classConsumes,
+                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain) {
+        ResolvedParameter resolvedParameter = new ResolvedParameter();
         if (this.shouldIgnoreType(type, typesToSkip)) {
-            return new ArrayList<Parameter>();
+            resolvedParameter.parameters = new ArrayList<>();
+            return resolvedParameter;
         }
 
         ClassToInstanceMap<Annotation> annotationMap = toMap(annotations);
 
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.addAll(extractParametersFromAnnotation(type, annotationMap));
+        List<Parameter> parameters = new ArrayList<>(extractParametersFromAnnotation(type, annotationMap));
 
         if (!parameters.isEmpty()) {
-            return parameters;
+            resolvedParameter.parameters = parameters;
+            return resolvedParameter;
         }
-        return super.extractParameters(annotations, type, typesToSkip, chain);
+        return super.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, jsonViewAnnotation, chain);
     }
 
     private ClassToInstanceMap<Annotation> toMap(Collection<? extends Annotation> annotations) {
@@ -58,113 +63,65 @@ public class JaxrsParameterExtension extends AbstractSwaggerExtension {
         List<Parameter> parameters = new ArrayList<>();
         if (annotations.containsKey(QueryParam.class)) {
             QueryParam param = annotations.getInstance(QueryParam.class);
-            QueryParameter queryParameter = extractQueryParam(type, defaultValue, param);
+            Parameter queryParameter = extractQueryParam(type, defaultValue, param);
             parameters.add(queryParameter);
         } else if (annotations.containsKey(PathParam.class)) {
             PathParam param = annotations.getInstance(PathParam.class);
-            PathParameter pathParameter = extractPathParam(type, defaultValue, param);
+            Parameter pathParameter = extractPathParam(type, defaultValue, param);
             parameters.add(pathParameter);
         } else if (annotations.containsKey(HeaderParam.class)) {
             HeaderParam param = annotations.getInstance(HeaderParam.class);
-            HeaderParameter headerParameter = extractHeaderParam(type, defaultValue, param);
+            Parameter headerParameter = extractHeaderParam(type, defaultValue, param);
             parameters.add(headerParameter);
         } else if (annotations.containsKey(CookieParam.class)) {
             CookieParam param = annotations.getInstance(CookieParam.class);
-            CookieParameter cookieParameter = extractCookieParameter(type, defaultValue, param);
+            Parameter cookieParameter = extractCookieParameter(type, defaultValue, param);
             parameters.add(cookieParameter);
         } else if (annotations.containsKey(FormParam.class)) {
             FormParam param = annotations.getInstance(FormParam.class);
-            FormParameter formParameter = extractFormParameter(type, defaultValue, param);
+            Parameter formParameter = extractFromParam(type, defaultValue, param);
             parameters.add(formParameter);
         }
 
         return parameters;
     }
 
-    private QueryParameter extractQueryParam(Type type, String defaultValue, QueryParam param) {
-        QueryParameter queryParameter = new QueryParameter().name(param.value());
 
-        if (!Strings.isNullOrEmpty(defaultValue)) {
-            queryParameter.setDefaultValue(defaultValue);
-        }
-        Property schema = ModelConverters.getInstance().readAsProperty(type);
-        if (schema != null) {
-            queryParameter.setProperty(schema);
-        }
-
-        String parameterType = queryParameter.getType();
-
-        if (parameterType == null || parameterType.equals("ref")) {
-            queryParameter.setType("string");
-        }
-        return queryParameter;
+    private Parameter extractFromParam(Type type, String defaultValue, FormParam param) {
+        Schema schema = new Schema().type(type.getTypeName());
+        schema.setDefault(defaultValue);
+        return new QueryParameter()
+                .name(param.value())
+                .schema(schema);
     }
 
-    private PathParameter extractPathParam(Type type, String defaultValue, PathParam param) {
-        PathParameter pathParameter = new PathParameter().name(param.value());
-        if (!Strings.isNullOrEmpty(defaultValue)) {
-            pathParameter.setDefaultValue(defaultValue);
-        }
-        Property schema = ModelConverters.getInstance().readAsProperty(type);
-        if (schema != null) {
-            pathParameter.setProperty(schema);
-        }
-
-        String parameterType = pathParameter.getType();
-        if (parameterType == null || parameterType.equals("ref")) {
-            pathParameter.setType("string");
-        }
-        return pathParameter;
+    private Parameter extractQueryParam(Type type, String defaultValue, QueryParam param) {
+        Schema schema = new Schema().type(type.getTypeName());
+        schema.setDefault(defaultValue);
+        return new QueryParameter()
+                .name(param.value())
+                .schema(schema);
     }
 
-    private HeaderParameter extractHeaderParam(Type type, String defaultValue, HeaderParam param) {
-        HeaderParameter headerParameter = new HeaderParameter().name(param.value());
-        if (!Strings.isNullOrEmpty(defaultValue)) {
-            headerParameter.setDefaultValue(defaultValue);
-        }
-        Property schema = ModelConverters.getInstance().readAsProperty(type);
-        if (schema != null) {
-            headerParameter.setProperty(schema);
-        }
-
-        String parameterType = headerParameter.getType();
-        if (parameterType == null || parameterType.equals("ref") || parameterType.equals("array")) {
-            headerParameter.setType("string");
-        }
-        return headerParameter;
+    private Parameter extractPathParam(Type type, String defaultValue, PathParam param) {
+        Schema schema = new Schema().type(type.getTypeName());
+        schema.setDefault(defaultValue);
+        return new PathParameter()
+                .name(param.value());
     }
 
-    private CookieParameter extractCookieParameter(Type type, String defaultValue, CookieParam param) {
-        CookieParameter cookieParameter = new CookieParameter().name(param.value());
-        if (!Strings.isNullOrEmpty(defaultValue)) {
-            cookieParameter.setDefaultValue(defaultValue);
-        }
-        Property schema = ModelConverters.getInstance().readAsProperty(type);
-        if (schema != null) {
-            cookieParameter.setProperty(schema);
-        }
-
-        String parameterType = cookieParameter.getType();
-        if (parameterType == null || parameterType.equals("ref") || parameterType.equals("array")) {
-            cookieParameter.setType("string");
-        }
-        return cookieParameter;
+    private Parameter extractHeaderParam(Type type, String defaultValue, HeaderParam param) {
+        Schema schema = new Schema().type(type.getTypeName());
+        schema.setDefault(defaultValue);
+        return new HeaderParameter()
+                .name(param.value());
     }
 
-    private FormParameter extractFormParameter(Type type, String defaultValue, FormParam param) {
-        FormParameter formParameter = new FormParameter().name(param.value());
-        if (!Strings.isNullOrEmpty(defaultValue)) {
-            formParameter.setDefaultValue(defaultValue);
-        }
-        Property schema = ModelConverters.getInstance().readAsProperty(type);
-        if (schema != null) {
-            formParameter.setProperty(schema);
-        }
-
-        String parameterType = formParameter.getType();
-        if (parameterType == null || parameterType.equals("ref") || parameterType.equals("array")) {
-            formParameter.setType("string");
-        }
-        return formParameter;
+    private Parameter extractCookieParameter(Type type, String defaultValue, CookieParam param) {
+        Schema schema = new Schema().type(type.getTypeName());
+        schema.setDefault(defaultValue);
+        return new CookieParameter()
+                .name(param.value());
     }
+
 }

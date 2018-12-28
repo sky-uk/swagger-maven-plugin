@@ -2,12 +2,14 @@ package com.github.kongchen.swagger.docgen;
 
 import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.FileTemplateLoader;
-import io.swagger.models.Model;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
+import io.swagger.v3.core.models.Model;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.Path;
+import io.swagger.v3.oas.models.Response;
+import io.swagger.v3.oas.models.Swagger;
+import io.swagger.v3.oas.models.Tag;
+import io.swagger.v3.oas.models.tags.Tag;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -66,7 +68,7 @@ public class Utils {
         return tp;
     }
 
-    public static void sortSwagger(Swagger swagger) throws GenerateException {
+    public static void sortSwagger(OpenAPI swagger) throws GenerateException {
         if (swagger == null || swagger.getPaths() == null) {
             return;
         }

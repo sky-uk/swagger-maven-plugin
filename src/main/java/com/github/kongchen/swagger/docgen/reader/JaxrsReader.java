@@ -31,32 +31,32 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import com.github.kongchen.swagger.docgen.jaxrs.BeanParamInjectParamExtension;
 import com.github.kongchen.swagger.docgen.jaxrs.JaxrsParameterExtension;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.converter.ModelConverters;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.jersey.SwaggerJerseyJaxrs;
-import io.swagger.models.ArrayModel;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Operation;
-import io.swagger.models.Response;
-import io.swagger.models.SecurityRequirement;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
-import io.swagger.models.parameters.BodyParameter;
-import io.swagger.models.parameters.Parameter;
-import io.swagger.models.parameters.RefParameter;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.refs.RefType;
-import io.swagger.util.BaseReaderUtils;
-import io.swagger.util.ReflectionUtils;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiResponses;
+import io.swagger.v3.core.annotations.Authorization;
+import io.swagger.v3.core.annotations.AuthorizationScope;
+import io.swagger.v3.core.annotations.SwaggerDefinition;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
+import io.swagger.v3.core.jersey.SwaggerJerseyJaxrs;
+import io.swagger.v3.core.models.ArrayModel;
+import io.swagger.v3.core.models.Model;
+import io.swagger.v3.core.models.ModelImpl;
+import io.swagger.v3.core.models.Operation;
+import io.swagger.v3.core.models.Response;
+import io.swagger.v3.core.models.SecurityRequirement;
+import io.swagger.v3.core.models.Swagger;
+import io.swagger.v3.core.models.Tag;
+import io.swagger.v3.core.models.parameters.BodyParameter;
+import io.swagger.v3.core.models.parameters.Parameter;
+import io.swagger.v3.core.models.parameters.RefParameter;
+import io.swagger.v3.core.models.properties.Property;
+import io.swagger.v3.core.models.properties.RefProperty;
+import io.swagger.v3.core.models.refs.RefType;
+import io.swagger.v3.core.util.BaseReaderUtils;
+import io.swagger.v3.core.util.ReflectionUtils;
 
 public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(JaxrsReader.class);
@@ -258,7 +258,7 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
         for (Class<?> aClass: new Reflections("").getTypesAnnotatedWith(SwaggerDefinition.class)) {
             SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
 
-            for (io.swagger.annotations.Tag tag : swaggerDefinition.tags()) {
+            for (io.swagger.v3.core.annotations.Tag tag : swaggerDefinition.tags()) {
 
                 String tagName = tag.name();
                 if (!tagName.isEmpty()) {
@@ -549,7 +549,7 @@ public class JaxrsReader extends AbstractReader implements ClassSwaggerReader {
             return "options";
         } else if (AnnotationUtils.findAnnotation(method, HEAD.class) != null) {
             return "head";
-        } else if (AnnotationUtils.findAnnotation(method, io.swagger.jaxrs.PATCH.class) != null) {
+        } else if (AnnotationUtils.findAnnotation(method, io.swagger.v3.core.jaxrs.PATCH.class) != null) {
             return "patch";
         } else {
             // check for custom HTTP Method annotations

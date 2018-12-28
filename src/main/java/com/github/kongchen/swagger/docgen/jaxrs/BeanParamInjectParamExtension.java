@@ -1,13 +1,15 @@
 package com.github.kongchen.swagger.docgen.jaxrs;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.github.kongchen.swagger.docgen.reader.AbstractReader;
 import com.github.kongchen.swagger.docgen.reader.JaxrsReader;
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.core.header.FormDataContentDisposition;
-import io.swagger.jaxrs.ext.AbstractSwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.v3.jaxrs2.ResolvedParameter;
+import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
+import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
+import io.swagger.v3.oas.models.Components;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
 import javax.ws.rs.BeanParam;
@@ -24,7 +26,7 @@ import java.util.Set;
  *
  * @author chekong on 15/5/9.
  */
-public class BeanParamInjectParamExtension extends AbstractSwaggerExtension {
+public class BeanParamInjectParamExtension extends AbstractOpenAPIExtension {
 
 
     private AbstractReader reader;
@@ -34,20 +36,25 @@ public class BeanParamInjectParamExtension extends AbstractSwaggerExtension {
     }
 
     @Override
-    public List<Parameter> extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Iterator<SwaggerExtension> chain) {
+    public ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
+                                               Components components, javax.ws.rs.Consumes classConsumes,
+                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain) {
         Class<?> cls = TypeUtils.getRawType(type, type);
+        ResolvedParameter resolvedParameter = new ResolvedParameter();
 
         if (shouldIgnoreClass(cls) || typesToSkip.contains(type)) {
             // stop the processing chain
             typesToSkip.add(type);
-            return Lists.newArrayList();
+            resolvedParameter.parameters = Lists.newArrayList();
+            return resolvedParameter;
         }
         for (Annotation annotation : annotations) {
             if (annotation instanceof BeanParam || annotation instanceof InjectParam) {
-                return reader.extractTypes(cls, typesToSkip, Lists.newArrayList());
+                resolvedParameter.parameters = reader.extractTypes(cls, typesToSkip, Lists.newArrayList());
+                return resolvedParameter;
             }
         }
-        return super.extractParameters(annotations, type, typesToSkip, chain);
+        return super.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, jsonViewAnnotation, chain);
     }
 
     @Override

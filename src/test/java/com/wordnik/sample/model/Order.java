@@ -17,7 +17,7 @@
 package com.wordnik.sample.model;
 
 import com.google.common.base.Optional; // Must be Google Guava Optional, because we run Java 6.
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.core.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

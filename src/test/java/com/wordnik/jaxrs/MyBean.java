@@ -1,6 +1,6 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiParam;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

@@ -2,9 +2,9 @@ package com.wordnik.jaxrs;
 
 import com.github.kongchen.swagger.docgen.reader.JaxrsReader;
 import com.wordnik.sample.TestVendorExtension;
-import io.swagger.jaxrs.ext.SwaggerExtension;
-import io.swagger.jaxrs.ext.SwaggerExtensions;
-import io.swagger.models.Swagger;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtension;
+import io.swagger.v3.core.jaxrs.ext.SwaggerExtensions;
+import io.swagger.v3.core.models.Swagger;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.LinkedList;

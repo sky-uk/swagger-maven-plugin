@@ -3,13 +3,12 @@ package com.github.kongchen.swagger.docgen.mavenplugin;
 import java.util.Collections;
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.springframework.web.bind.annotation.RestController;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import io.swagger.annotations.Api;
 
 public class SpringMavenDocumentSourceTest
 {
@@ -37,7 +36,7 @@ public class SpringMavenDocumentSourceTest
     {
     }
 
-    @Api
+    @OpenAPIDefinition
     @RestController
     private static class ExampleController2
     {

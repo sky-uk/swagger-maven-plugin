@@ -1,12 +1,14 @@
 package com.github.kongchen.swagger.docgen.mavenplugin;
 
+import com.github.kongchen.swagger.docgen.BaseReaderUtils;
 import com.google.common.base.Strings;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.models.Contact;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.Info;
-import io.swagger.models.License;
-import io.swagger.util.BaseReaderUtils;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.models.info.Contact;
+
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.reflections.Reflections;
@@ -143,7 +145,7 @@ public class ApiSource {
     private String operationIdFormat;
 
     @Parameter
-    private ExternalDocs externalDocs;
+    private io.swagger.v3.oas.models.ExternalDocumentation externalDocs;
 
     public Set<Class<?>> getValidClasses(Class<? extends Annotation> clazz) {
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
@@ -200,9 +202,9 @@ public class ApiSource {
 
     private void setInfoFromAnnotation() {
         Info resultInfo = new Info();
-        for (Class<?> aClass : getValidClasses(SwaggerDefinition.class)) {
-            SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
-            io.swagger.annotations.Info infoAnnotation = swaggerDefinition.info();
+        for (Class<?> aClass : getValidClasses(OpenAPIDefinition.class)) {
+            OpenAPIDefinition openAPIDefinition = AnnotationUtils.findAnnotation(aClass, OpenAPIDefinition.class);
+            io.swagger.v3.oas.annotations.info.Info infoAnnotation = openAPIDefinition.info();
 
             Info info = new Info().title(infoAnnotation.title())
                     .description(emptyToNull(infoAnnotation.description()))
@@ -213,15 +215,20 @@ public class ApiSource {
 
             Map<String, Object> customExtensions = BaseReaderUtils.parseExtensions(infoAnnotation.extensions());
             for (Map.Entry<String, Object> extension : customExtensions.entrySet()) {
-                resultInfo.setVendorExtension(extension.getKey(), extension.getValue());
+                resultInfo.addExtension(extension.getKey(), extension.getValue());
             }
 
-            resultInfo.mergeWith(info);
+            resultInfo.setContact(info.getContact());
+            resultInfo.setDescription(info.getDescription());
+            resultInfo.setLicense(info.getLicense());
+            resultInfo.setTermsOfService(info.getTermsOfService());
+            resultInfo.setTitle(info.getTitle());
+            resultInfo.setVersion(info.getVersion());
         }
         info = resultInfo;
     }
 
-    private Contact from(io.swagger.annotations.Contact contactAnnotation) {
+    private Contact from(io.swagger.v3.oas.annotations.info.Contact contactAnnotation) {
         Contact contact = new Contact()
                 .name(emptyToNull(contactAnnotation.name()))
                 .email(emptyToNull(contactAnnotation.email()))
@@ -232,7 +239,7 @@ public class ApiSource {
         return contact;
     }
 
-    private License from(io.swagger.annotations.License licenseAnnotation) {
+    private License from(io.swagger.v3.oas.annotations.info.License licenseAnnotation) {
         License license = new License()
                 .name(emptyToNull(licenseAnnotation.name()))
                 .url(emptyToNull(licenseAnnotation.url()));
@@ -242,27 +249,18 @@ public class ApiSource {
         return license;
     }
 
-    private void setBasePathFromAnnotation() {
-        for (Class<?> aClass : getValidClasses(SwaggerDefinition.class)) {
-            SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
-            basePath = emptyToNull(swaggerDefinition.basePath());
-        }
-    }
-
-    private void setHostFromAnnotation() {
-        for (Class<?> aClass : getValidClasses(SwaggerDefinition.class)) {
-            SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
-            host = emptyToNull(swaggerDefinition.host());
-        }
-    }
-
     private void setExternalDocsFromAnnotation() {
-        for (Class<?> aClass : getValidClasses(SwaggerDefinition.class)) {
-            SwaggerDefinition swaggerDefinition = AnnotationUtils.findAnnotation(aClass, SwaggerDefinition.class);
-            io.swagger.annotations.ExternalDocs docsAnnotation = swaggerDefinition.externalDocs();
+        for (Class<?> aClass : getValidClasses(OpenAPIDefinition.class)) {
+            OpenAPIDefinition openAPIDefinition = AnnotationUtils.findAnnotation(aClass, OpenAPIDefinition.class);
+            ExternalDocumentation docsAnnotation = openAPIDefinition.externalDocs();
 
             if (!Strings.isNullOrEmpty(docsAnnotation.url())) {
-                externalDocs = new ExternalDocs(docsAnnotation.value(), docsAnnotation.url());
+                externalDocs = new io.swagger.v3.oas.models.ExternalDocumentation();
+                externalDocs.setDescription(docsAnnotation.description());
+                for (Extension e : docsAnnotation.extensions()) {
+                    externalDocs.addExtension(e.name(), e);
+                }
+                externalDocs.setUrl(docsAnnotation.url());
                 break;
             }
         }
@@ -305,9 +303,6 @@ public class ApiSource {
     }
 
     public String getBasePath() {
-        if (basePath == null) {
-            setBasePathFromAnnotation();
-        }
         return basePath;
     }
 
@@ -348,13 +343,10 @@ public class ApiSource {
     }
 
     public String getHost() {
-        if (host == null) {
-            setHostFromAnnotation();
-        }
         return host;
     }
 
-    public ExternalDocs getExternalDocs() {
+    public io.swagger.v3.oas.models.ExternalDocumentation getExternalDocs() {
         if (externalDocs == null) {
             setExternalDocsFromAnnotation();
         }

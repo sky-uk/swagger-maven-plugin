@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiParam;
 
 @Api
 @RequestMapping(value = "/wrappers", produces = {"application/json"})

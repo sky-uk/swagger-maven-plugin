@@ -1,7 +1,7 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiOperation;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -22,17 +22,17 @@ import com.wordnik.sample.TestVendorExtension;
 import com.wordnik.sample.data.PetData;
 import com.wordnik.sample.model.Pet;
 import com.wordnik.sample.model.PetName;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
+import io.swagger.v3.core.annotations.Api;
+import io.swagger.v3.core.annotations.ApiImplicitParam;
+import io.swagger.v3.core.annotations.ApiImplicitParams;
+import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.core.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiResponse;
+import io.swagger.v3.core.annotations.ApiResponses;
+import io.swagger.v3.core.annotations.Authorization;
+import io.swagger.v3.core.annotations.AuthorizationScope;
+import io.swagger.v3.core.annotations.Extension;
+import io.swagger.v3.core.annotations.ExtensionProperty;
 
 import java.util.List;
 

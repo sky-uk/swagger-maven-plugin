@@ -3,7 +3,7 @@ package com.wordnik.jaxrs;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.HeaderParam;
 
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.core.annotations.ApiParam;
 
 /**
  * Represents a nested {@code @BeanParam} target that is injected by constructor.
@@ -15,7 +15,7 @@ public class MyConstructorInjectedNestedBean {
     /**
      * Note: this property will not be found by
      * {@link com.github.kongchen.swagger.docgen.reader.SwaggerReader}, which
-     * seems to be a limitation of {@link io.swagger.jaxrs.Reader} itself.
+     * seems to be a limitation of {@link io.swagger.v3.core.jaxrs.Reader} itself.
      */
     private final String constructorInjectedHeader;
     

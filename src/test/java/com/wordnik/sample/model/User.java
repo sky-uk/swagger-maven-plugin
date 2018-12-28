@@ -16,9 +16,9 @@
 
 package com.wordnik.sample.model;
 
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.Extension;
-import io.swagger.annotations.ExtensionProperty;
+import io.swagger.v3.core.annotations.ApiModelProperty;
+import io.swagger.v3.core.annotations.Extension;
+import io.swagger.v3.core.annotations.ExtensionProperty;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

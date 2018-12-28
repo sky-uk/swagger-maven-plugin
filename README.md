@@ -18,7 +18,7 @@ This plugin enables your Swagger-annotated project to generate **Swagger specs**
 - [1.1.1](https://github.com/kongchen/swagger-maven-plugin/tree/1.1.1) supports Swagger Spec 1.1. (**No longer maintained**)
 
 ## Upgrading from 3.0.1 to 3.1.0+
-Version 3.1.0+ of this plugin depends on the re-packaged/re-branded io.swagger.swagger-core dependency, which is formerly known as com.wordnik.swagger-core. If you use 3.1.0+, you must use the swagger-core dependency in the io.swagger namespace instead of the com.wordnik namespace, which is deprecated. You may see an example of migrating a project from 3.0.1 to 3.1.0 in the [swagger-maven-plugin example project](https://github.com/swagger-maven-plugin/swagger-maven-example/commit/3d6bfa06d638d0855edc04816d4e35bff4a5e771#diff-600376dffeb79835ede4a0b285078036).
+Version 3.1.0+ of this plugin depends on the re-packaged/re-branded io.swagger.v3.core.swagger-core dependency, which is formerly known as com.wordnik.swagger-core. If you use 3.1.0+, you must use the swagger-core dependency in the io.swagger namespace instead of the com.wordnik namespace, which is deprecated. You may see an example of migrating a project from 3.0.1 to 3.1.0 in the [swagger-maven-plugin example project](https://github.com/swagger-maven-plugin/swagger-maven-example/commit/3d6bfa06d638d0855edc04816d4e35bff4a5e771#diff-600376dffeb79835ede4a0b285078036).
 
 
 # Usage
@@ -83,8 +83,8 @@ The `executions` block is used to specify the phase of the build lifecycle you w
 | `typesToSkip` | Nodes of class names to explicitly skip during parameter processing. More details [below](#typesToSkip)|
 | `apiModelPropertyAccessExclusions` | Allows the exclusion of specified `@ApiModelProperty` fields. This can be used to hide certain model properties from the swagger spec. More details [below](#apiModelPropertyAccessExclusions)|
 | `jsonExampleValues` | If `true`, all example values in `@ApiModelProperty` will be handled as json raw values. This is useful for creating valid examples in the generated json for all property types, including non-string ones. |
-| `modelConverters` | List of custom implementations of `io.swagger.converter.ModelConverter` that should be used when generating the swagger files. |
-| `swaggerExtensions` | List of custom implementations of `io.swagger.jaxrs.ext.SwaggerExtension` that should be used when generating the swagger files. |
+| `modelConverters` | List of custom implementations of `io.swagger.v3.core.converter.ModelConverter` that should be used when generating the swagger files. |
+| `swaggerExtensions` | List of custom implementations of `io.swagger.v3.core.jaxrs.ext.SwaggerExtension` that should be used when generating the swagger files. |
 | `enabledObjectMapperFeatures`    | List of ConfigFeature enums that are supported by ObjectMapper.configure - the feature is set to true. https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#features) here, see more details [below](#features)|
 | `disabledObjectMapperFeatures`    | List of ConfigFeature enums that are supported by ObjectMapper.configure - the feature is set to false. https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#features) here, see more details [below](#features)|
 | `operationIdFormat` | Format of `operationId` used in Swagger spec. For historical reasons default is Java method name. Since 3.1.8, for new APIs suggested format is: `{{className}}_{{methodName}}_{{httpMethod}}`. `{{packageName}}` token is also supported. |
@@ -353,7 +353,7 @@ There's a [sample here](https://github.com/swagger-maven-plugin/swagger-maven-ex
                 <swaggerDirectory>${basedir}/generated/swagger-ui</swaggerDirectory>
                 <swaggerApiReader>com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader</swaggerApiReader>
                 <attachSwaggerArtifact>true</attachSwaggerArtifact>
-                <modelConverters>io.swagger.validator.BeanValidator</modelConverters>
+                <modelConverters>io.swagger.v3.core.validator.BeanValidator</modelConverters>
                 <swaggerExtensions>
                     <swaggerExtension>com.example.VendorExtension</swaggerExtension>
                 </swaggerExtensions>
