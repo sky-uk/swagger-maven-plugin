@@ -16,9 +16,9 @@
 
 package com.wordnik.sample.model;
 
-import io.swagger.v3.core.annotations.ApiModelProperty;
-import io.swagger.v3.core.annotations.Extension;
-import io.swagger.v3.core.annotations.ExtensionProperty;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -72,7 +72,7 @@ public class User {
     }
 
     @XmlElement(name = "nickName")
-    @ApiModelProperty(name = "nickName", example = "\"Bob\"", access = "exclude-when-jev-option-not-set")
+    @Schema(name = "nickName", example = "\"Bob\"", accessMode = Schema.AccessMode.AUTO/*"exclude-when-jev-option-not-set"*/)
     public String getNickName() {
         return nickName;
     }
@@ -100,7 +100,7 @@ public class User {
     }
 
     @XmlElement(name = "phone")
-    @ApiModelProperty(name = "phone", extensions = @Extension(properties = @ExtensionProperty(name = "test", value = "value")))
+    @Schema(name = "phone", extensions = {@Extension(properties = @ExtensionProperty(name = "test", value = "value"))})
     public String getPhone() {
         return phone;
     }
@@ -110,7 +110,7 @@ public class User {
     }
 
     @XmlElement(name = "userStatus")
-    @ApiModelProperty(value = "User Status", allowableValues = "1-registered,2-active,3-closed", example = "2")
+    @Schema(name = "User Status", allowableValues = "1-registered,2-active,3-closed", example = "2")
     public int getUserStatus() {
         return userStatus;
     }

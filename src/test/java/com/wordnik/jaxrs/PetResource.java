@@ -18,45 +18,33 @@ package com.wordnik.jaxrs;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.wordnik.sample.JavaRestResourceUtil;
-import com.wordnik.sample.TestVendorExtension;
 import com.wordnik.sample.data.PetData;
 import com.wordnik.sample.model.Pet;
 import com.wordnik.sample.model.PetName;
-import io.swagger.v3.core.annotations.Api;
-import io.swagger.v3.core.annotations.ApiImplicitParam;
-import io.swagger.v3.core.annotations.ApiImplicitParams;
-import io.swagger.v3.core.annotations.ApiOperation;
-import io.swagger.v3.core.annotations.ApiParam;
-import io.swagger.v3.core.annotations.ApiResponse;
-import io.swagger.v3.core.annotations.ApiResponses;
-import io.swagger.v3.core.annotations.Authorization;
-import io.swagger.v3.core.annotations.AuthorizationScope;
-import io.swagger.v3.core.annotations.Extension;
-import io.swagger.v3.core.annotations.ExtensionProperty;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.servers.Server;
 
-import java.util.List;
-
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 @Path("/pet")
-@Api(value = "/pet", description = "Operations about pets", authorizations = {
-        @Authorization(value = "petstore_auth",
-                scopes = {
-                        @AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
-                        @AuthorizationScope(scope = "read:pets", description = "read your pets")
-                })
+@OpenAPIDefinition(servers = {@Server(
+        url = "/pet",
+        description = "Operations about pets"
+
+)}, security = {
+        @SecurityRequirement(name = "petstore_auth", scopes = {"write:pets", "read:pets"})
 })
 @Produces({"application/json", "application/xml"})
 public class PetResource {
@@ -65,15 +53,18 @@ public class PetResource {
 
     @GET
     @Path("/{petId : [0-9]}")
-    @ApiOperation(value = "Find pet by ID",
-            notes = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions",
-            response = Pet.class,
-            authorizations = @Authorization(value = "api_key")
+    @Operation(summary = "Find pet by ID",
+            description = "Returns a pet when ID < 10.  ID > 10 or nonintegers will simulate API error conditions",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))},
+            security = {
+                    @SecurityRequirement(name = "api_key")
+            }
     )
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
-            @ApiResponse(code = 404, message = "Pet not found")})
+    @ApiResponses({@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+            @ApiResponse(responseCode = "404", description = "Pet not found")})
     public Response getPetById(
-            @ApiParam(value = "ID of pet that needs to be fetched", allowableValues = "range[1,5]", required = true) @PathParam("petId") Long petId)
+            @Parameter(description = "ID of pet that needs to be fetched", schema = @Schema(allowableValues = "range[1,5]"), required = true)
+            @PathParam("petId") Long petId)
             throws com.wordnik.sample.exception.NotFoundException {
         Pet pet = petData.getPetbyId(petId);
         if (pet != null) {
@@ -82,126 +73,86 @@ public class PetResource {
             throw new com.wordnik.sample.exception.NotFoundException(404, "Pet not found");
         }
     }
-    //contrived example test case for swagger-maven-plugin issue #304
-    @GET
-    @Path("/{startId : [0-9]{1,2}}:{endId : [0-9]{1,2}}")
-    @ApiOperation(value = "Find pet(s) by ID",
-            notes = "This is a contrived example of a path segment containing multiple path parameters, separated by a character which may be present in the path parameter template. You may think that it returns a range of pets from startId to endId, inclusive, but it doesn't.",
-            response = Pet.class,
-            authorizations = @Authorization(value = "api_key")
-    )
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
-            @ApiResponse(code = 404, message = "Pet not found")})
-    public Response getPetsById(
-            @ApiParam(value = "start ID of pets that need to be fetched", allowableValues = "range[1,99]", required = true) @PathParam("startId") Long startId,
-            @ApiParam(value = "end ID of pets that need to be fetched", allowableValues = "range[1,99]", required = true) @PathParam("endId") Long endId)
-            throws com.wordnik.sample.exception.NotFoundException {
-        Pet pet = petData.getPetbyId(startId);
-        if (pet != null) {
-            return Response.ok().entity(pet).build();
-        } else {
-            throw new com.wordnik.sample.exception.NotFoundException(404, "Pet not found");
-        }
-    }
-
+    
     @DELETE
     @Path("/{petId}")
-    @ApiOperation(value = "Deletes a pet", nickname = "removePet")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid pet value")})
+    @Operation(summary = "Deletes a pet", tags = {"removePet"})
+    @ApiResponses({@ApiResponse(responseCode = "400", description = "Invalid pet value")})
     public Response deletePet(
-            @ApiParam() @HeaderParam("api_key") String apiKey,
-            @ApiParam(value = "Pet id to delete", required = true) @PathParam("petId") Long petId) {
+            @Parameter() @HeaderParam("api_key") String apiKey,
+            @Parameter(description = "Pet id to delete", required = true) @PathParam("petId") Long petId) {
         petData.deletePet(petId);
         return Response.ok().build();
     }
 
     @POST
     @Consumes({"application/json", "application/xml"})
-    @ApiOperation(value = "Add a new pet to the store")
-    @ApiResponses(value = {@ApiResponse(code = 405, message = "Invalid input")})
+    @Operation(description = "Add a new pet to the store")
+    @ApiResponses({@ApiResponse(responseCode = "405", description = "Invalid input")})
     public Response addPet(
-            @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
+            @Parameter(description = "Pet object that needs to be added to the store", required = true) Pet pet) {
         Pet updatedPet = petData.addPet(pet);
         return Response.ok().entity(updatedPet).build();
     }
 
     @PUT
     @Consumes({"application/json", "application/xml"})
-    @ApiOperation(value = "Update an existing pet")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid ID supplied"),
-            @ApiResponse(code = 404, message = "Pet not found"),
-            @ApiResponse(code = 405, message = "Validation exception")})
+    @Operation(description = "Update an existing pet")
+    @ApiResponses({@ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+            @ApiResponse(responseCode = "404", description = "Pet not found"),
+            @ApiResponse(responseCode = "405", description = "Validation exception")})
     public Response updatePet(
-            @ApiParam(value = "Pet object that needs to be added to the store", required = true) Pet pet) {
+            @Parameter(description = "Pet object that needs to be added to the store", required = true) Pet pet) {
         Pet updatedPet = petData.addPet(pet);
         return Response.ok().entity(updatedPet).build();
     }
 
     @GET
     @Path("/pets/{petName : [^/]*}")
-    @ApiOperation(value = "Finds Pets by name",
-            response = Pet.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Invalid status value")})
+    @Operation(description = "Finds Pets by name",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))})
+    // TODO should be a list of pets
+    @ApiResponses({
+            @ApiResponse(responseCode = "400", description = "Invalid status value")})
     public Response findPetByPetName(
-            @ApiParam(value = "petName", required = true)
+            @Parameter(description = "petName", required = true)
             @PathParam("petName") PetName petName) {
         return Response.ok(petData.getPetbyId(1)).build();
     }
 
-    @GET
-    @Path("/findByStatus")
-    @ApiOperation(value = "Finds Pets by status",
-            notes = "Multiple status values can be provided with comma seperated strings",
-            response = Pet.class,
-            responseContainer = "List")
-    @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Invalid status value")})
-    public Response findPetsByStatus(
-            @ApiParam(
-                    value = "Status values that need to be considered for filter",
-                    required = true,
-                    defaultValue = "available",
-                    allowableValues = "available,pending,sold",
-                    allowMultiple = true)
-            @QueryParam("status") String status) {
-        return Response.ok(petData.findPetByStatus(status)).build();
-    }
 
     @GET
     @Path("/findByTags")
-    @ApiOperation(value = "Finds Pets by tags",
-            notes = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
-            response = Pet.class,
-            responseContainer = "List")
-    @ApiResponses(value = {@ApiResponse(code = 400, message = "Invalid tag value")})
+    @Operation(description = "Finds Pets by tags",
+            summary = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))})
+    @ApiResponses({@ApiResponse(responseCode = "400", description = "Invalid tag value")})
     @Deprecated
     public Response findPetsByTags(
-            @ApiParam(value = "Tags to filter by", required = true, allowMultiple = true) @QueryParam("tags") String tags) {
+            // TODO allow multiple
+            @Parameter(description = "Tags to filter by", required = true) @QueryParam("tags") String tags) {
         return Response.ok(petData.findPetByTags(tags)).build();
     }
 
-	@GET
-	@Path("/findAll")
-	@ApiOperation(value = "Finds all Pets", notes = "Returns a paginated list of all the Pets.")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid page number value") })
-	public PagedList<Pet> findAllPaginated(
-			@ApiParam(value = "pageNumber", required = true) @QueryParam("pageNumber") int pageNumber) {
-		List<Pet> allPets = petData.findAllPets();
-		int pageSize = 5;
-		int startIndex = (pageNumber - 1) * pageSize;
-		int endIndex = startIndex + pageSize;
-		return new PagedList<Pet>(pageNumber, allPets.size(), allPets.subList(startIndex, endIndex));
-	}
+    @GET
+    @Path("/findAll")
+    @Operation(description = "Finds all Pets", summary = "Returns a paginated list of all the Pets.")
+    @ApiResponses({@ApiResponse(responseCode = "400", description = "Invalid page number value")})
+    public PagedList<Pet> findAllPaginated(
+            @Parameter(description = "pageNumber", required = true) @QueryParam("pageNumber") int pageNumber) {
+        List<Pet> allPets = petData.findAllPets();
+        int pageSize = 5;
+        int startIndex = (pageNumber - 1) * pageSize;
+        int endIndex = startIndex + pageSize;
+        return new PagedList<Pet>(pageNumber, allPets.size(), allPets.subList(startIndex, endIndex));
+    }
 
     @POST
     @Path("/{petId}")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    @ApiOperation(value = "Updates a pet in the store with form data",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    @ApiResponses(value = {
-            @ApiResponse(code = 405, message = "Invalid input")})
+    @Operation(description = "Updates a pet in the store with form data") // TODO consumes form urlencoded
+    @ApiResponses({
+            @ApiResponse(responseCode = "405", description = "Invalid input")})
     public Response updatePetWithForm(
             @BeanParam MyBean myBean) {
         System.out.println(myBean.getName());
@@ -212,10 +163,9 @@ public class PetResource {
     @POST
     @Path("/{petId}/testInjectParam")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    @ApiOperation(value = "Updates a pet in the store with form data",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    @ApiResponses(value = {
-            @ApiResponse(code = 405, message = "Invalid input")})
+    @Operation(description = "Updates a pet in the store with form data") // TODO consumes form urlencoded
+    @ApiResponses({
+            @ApiResponse(responseCode = "405", description = "Invalid input")})
     public Response updatePetWithFormViaInjectParam(
             @InjectParam MyBean myBean) {
         System.out.println(myBean.getName());
@@ -223,19 +173,21 @@ public class PetResource {
         return Response.ok().entity(new com.wordnik.sample.model.ApiResponse(200, "SUCCESS")).build();
     }
 
-    @ApiOperation(value = "Returns pet", response = Pet.class)
+    @Operation(description = "Returns pet", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))})
     @GET
     @Produces("application/json")
-    public Pet get(@ApiParam(hidden = true, name = "hiddenParameter") @QueryParam("hiddenParameter") String hiddenParameter) {
+    public Pet get(@Parameter(hidden = true, name = "hiddenParameter") @QueryParam("hiddenParameter") String hiddenParameter) {
         return new Pet();
     }
 
-    @ApiOperation(value = "Test pet as json string in query", response = Pet.class)
+    @Operation(description = "Test pet as json string in query", responses = {
+            @ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))
+    })
     @GET
     @Path("/test")
     @Produces("application/json")
     public Pet test(
-            @ApiParam(value = "describe Pet in json here")
+            @Parameter(description = "describe Pet in json here")
             @QueryParam("pet") Pet pet) {
         return new Pet();
     }
@@ -243,7 +195,7 @@ public class PetResource {
     @GET
     @Path("/test/extensions")
     @Produces("text/plain")
-    @ApiOperation(value = "testExtensions",
+    @Operation(description = "testExtensions",
             extensions = {
                     @Extension(name = "firstExtension", properties = {
                             @ExtensionProperty(name = "extensionName1", value = "extensionValue1"),
@@ -256,14 +208,15 @@ public class PetResource {
         return new Pet();
     }
 
-    @ApiOperation(value = "Test apiimplicitparams", response = Pet.class)
+/*
+    @Operation(description = "Test apiimplicitparams", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))})
     @GET
     @Path("/test/apiimplicitparams/{path-test-name}")
     @Produces("application/json")
-    @ApiImplicitParams(value = {
+    @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "header-test-name",
-                    value = "header-test-value",
+                    description = "header-test-value",
                     required = true,
                     dataType = "string",
                     paramType = "header",
@@ -271,7 +224,7 @@ public class PetResource {
 
             @ApiImplicitParam(
                     name = "path-test-name",
-                    value = "path-test-value",
+                    description = "path-test-value",
                     required = true,
                     dataType = "string",
                     paramType = "path",
@@ -279,7 +232,7 @@ public class PetResource {
 
             @ApiImplicitParam(
                     name = "body-test-name",
-                    value = "body-test-value",
+                    description = "body-test-value",
                     required = true,
                     dataType = "com.wordnik.sample.model.Pet",
                     paramType = "body")
@@ -288,14 +241,14 @@ public class PetResource {
         return new Pet();
     }
 
-    @ApiOperation(value = "Test testFormApiImplicitParams", response = Pet.class)
+    @Operation(description = "Test testFormApiImplicitParams", responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = Pet.class)))})
     @GET
     @Path("/test/testFormApiImplicitParams")
     @Produces("application/json")
-    @ApiImplicitParams(value = {
+    @ApiImplicitParams({
             @ApiImplicitParam(
                     name = "form-test-name",
-                    value = "form-test-value",
+                    description = "form-test-value",
                     allowMultiple = true,
                     required = true,
                     dataType = "string",
@@ -305,31 +258,37 @@ public class PetResource {
     public Pet testFormApiImplicitParams() {
         return new Pet();
     }
+*/
 
-    @ApiOperation(value = "testingHiddenApiOperation", hidden = true)
+    @Operation(description = "testingHiddenApiOperation", hidden = true)
     @GET
     @Produces("application/json")
     public String testingHiddenApiOperation() {
         return "testingHiddenApiOperation";
     }
 
-    @ApiOperation(value = "testingBasicAuth", authorizations = @Authorization(value = "basicAuth"))
+    @Operation(description = "testingBasicAuth", security = {@SecurityRequirement(name = "basicAuth")})
     @GET
     @Path("/test/testingBasicAuth")
     public String testingBasicAuth() {
         return "testingBasicAuth";
     }
 
-    @ApiOperation(value = "testingArrayResponse")
-    @ApiResponses(@ApiResponse(code = 200, message = "array", response = Pet.class, responseContainer = "List"))
+    @Operation(description = "testingArrayResponse")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "array",
+                    content = @Content(schema = @Schema(implementation = Pet.class)) // TODO return list of pets
+            )
+    )
     @GET
     @Path("/test/testingArrayResponse")
     public Response testingArrayResponse() {
         return null;
     }
 
-    @ApiOperation("testingVendorExtensions")
-    @TestVendorExtension.TestVendorAnnotation
+    @Operation(summary = "testingVendorExtensions")
     @GET
     @Path("/test/testingVendorExtensions")
     public Response testingVendorExtensions() {

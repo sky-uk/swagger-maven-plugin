@@ -1,9 +1,10 @@
 package com.wordnik.jaxrs;
 
+import io.swagger.v3.oas.annotations.Parameter;
+
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.HeaderParam;
 
-import io.swagger.v3.core.annotations.ApiParam;
 
 /**
  * Represents a nested {@code @BeanParam} target that is injected by constructor.
@@ -21,7 +22,7 @@ public class MyConstructorInjectedNestedBean {
     
     // @Inject would typically go here in real life, telling e.g. Jersey to use constructor injection
     public MyConstructorInjectedNestedBean(
-            @ApiParam("Header injected at constructor")
+            @Parameter(description = "Header injected at constructor")
             @HeaderParam("constructorInjectedHeader")
             @DefaultValue("foo")
             String constructorInjectedHeader

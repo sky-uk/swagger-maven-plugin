@@ -1,34 +1,31 @@
 package com.wordnik.jaxrs;
 
 import com.wordnik.sample.model.User;
-import io.swagger.v3.core.annotations.Api;
-import io.swagger.v3.core.annotations.ApiOperation;
-import io.swagger.v3.core.annotations.ApiParam;
-import io.swagger.v3.core.annotations.ApiResponse;
-import io.swagger.v3.core.annotations.ApiResponses;
-import io.swagger.v3.core.annotations.Authorization;
-import java.util.Arrays;
-import java.util.List;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 
 /**
  *
  * @author pradeep.chaudhary
  */
 @Produces(MediaType.APPLICATION_JSON)
-@Api(hidden=true, authorizations = {@Authorization(value="api_key")}, tags = {"Resource-V1"})
+@OpenAPIDefinition(security = {@SecurityRequirement(name="api_key")}, tags = {@Tag(name = "Resource-V1")})
 public class SubResource {
 
     @GET
-    @ApiOperation(value="List of users",notes="Get user list")     
+    @Operation(summary="List of users",description="Get user list")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful operation", response = List.class)
+        @ApiResponse(responseCode = "200", description = "Successful operation" /*, response = List.class*/)
     })
     public Response getUsers() {
         User john = new User();
@@ -44,11 +41,11 @@ public class SubResource {
 
     @Path("/{username}")
     @GET
-    @ApiOperation(value="Fetch a user by username")     
+    @Operation(description="Fetch a user by username")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful operation", response = User.class)
+        @ApiResponse(responseCode = "200", description = "Successful operation"/*, response = User.class*/)
     })
-    public Response getUserByName(@ApiParam(value = "Username of user that needs to be fetched", required = true) 
+    public Response getUserByName(@Parameter(description = "Username of user that needs to be fetched", required = true)
                                     @PathParam("username") String username) {
         User max = new User();
         max.setFirstName("Max");
@@ -59,11 +56,11 @@ public class SubResource {
     }
 
     @PUT
-    @ApiOperation(value="Update User")     
+    @Operation(summary="Update User")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successful operation")
+        @ApiResponse(responseCode = "200", description = "Successful operation")
     })
-    public Response updateUser(@ApiParam(value = "User to be updated", required = true) User user) {        
+    public Response updateUser(@Parameter(description = "User to be updated", required = true) User user) {
         return Response.ok().build();
     }
     

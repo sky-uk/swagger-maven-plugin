@@ -1,7 +1,7 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.v3.core.annotations.Api;
-import io.swagger.v3.core.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,10 +10,10 @@ import javax.ws.rs.Path;
  * @author andrewb
  */
 @Path("/")
-@Api(value = "/")
+@OpenAPIDefinition
 public class RootPathResource {
     @GET
-    @ApiOperation(value = "testingRootPathResource")
+    @Operation(summary = "testingRootPathResource")
     public String testingRootPathResource() {
         return "testingRootPathResource";
     }

@@ -20,9 +20,9 @@ import com.wordnik.sample.JavaRestResourceUtil;
 import com.wordnik.sample.data.PetData;
 import com.wordnik.sample.model.ListItem;
 import com.wordnik.sample.model.Pet;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
-import io.swagger.v3.core.annotations.ApiOperation;
-import io.swagger.v3.core.annotations.ApiParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -74,9 +74,9 @@ public class MyResourceImpl extends MyResourceAbstract<String> {
     }
 
     @POST
-    @ApiOperation(value = "Insert a response", notes = "This is a contrived example")
+    @Operation(summary = "Insert a response", description = "This is a contrived example")
     @Override
-    public Response insertResource(@ApiParam(value = "Resource to insert", required = true) String resource) {
+    public Response insertResource(@Parameter(description = "Resource to insert", required = true) String resource) {
         return Response.ok().build();
     }
 }

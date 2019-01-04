@@ -16,7 +16,7 @@
 
 package com.wordnik.sample.model;
 
-import io.swagger.v3.core.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -52,7 +52,9 @@ public class Pet {
     }
 
     @XmlElement(name = "name")
-    @ApiModelProperty(name = "name", example = "doggie", required = true, access = "exclude-when-jev-option-set")
+    @Schema(
+            name = "name", example = "doggie", required = true, accessMode = Schema.AccessMode.AUTO
+    )
     public PetName getName() {
         return name;
     }
@@ -82,7 +84,7 @@ public class Pet {
     }
 
     @XmlElement(name = "status")
-    @ApiModelProperty(value = "pet status in the store", allowableValues = "available,pending,sold")
+    @Schema(description = "pet status in the store", allowableValues = "available,pending,sold")
     public String getStatus() {
         return status;
     }

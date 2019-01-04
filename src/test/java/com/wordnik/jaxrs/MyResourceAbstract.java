@@ -2,7 +2,7 @@ package com.wordnik.jaxrs;
 
 import com.wordnik.sample.exception.NotFoundException;
 import com.wordnik.sample.model.ListItem;
-import io.swagger.v3.core.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -22,6 +22,6 @@ public abstract class MyResourceAbstract<T> implements MyResource<T> {
     @Override
     public abstract Response testParamInheritance(
             @PathParam("firstParamAbstract") String firstParam,
-            @ApiParam(required = true) @QueryParam("secondParamAbstract") String secondParam,
+            @Parameter(required = true) @QueryParam("secondParamAbstract") String secondParam,
             String thirdParam);
 }

@@ -1,6 +1,7 @@
 package com.wordnik.sample.model;
 
-import io.swagger.v3.core.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Parameter;
 
 public class PaginationHelper {
     private Integer limit;
@@ -13,7 +14,7 @@ public class PaginationHelper {
         return limit;
     }
 
-    @ApiParam(value = "The pagination limit", name = "limit")
+    @Parameter(description = "The pagination limit", name = "limit")
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
@@ -22,7 +23,7 @@ public class PaginationHelper {
         return offset;
     }
 
-    @ApiParam(value = "The pagination offset", name = "offset")
+    @Parameter(description = "The pagination offset", name = "offset")
     public void setOffset(Integer offset) {
         this.offset = offset;
     }

@@ -1,6 +1,7 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.v3.core.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.ws.rs.HeaderParam;
 
@@ -9,7 +10,7 @@ import javax.ws.rs.HeaderParam;
  */
 public class MyParentBean {
 
-    @ApiParam(value = "Header from parent", required = false)
+    @Parameter(description = "Header from parent", required = false)
     @HeaderParam("myParentHeader")
     private String myParentheader;
 

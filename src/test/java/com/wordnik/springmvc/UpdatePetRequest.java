@@ -1,6 +1,6 @@
 package com.wordnik.springmvc;
 
-import io.swagger.v3.core.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public class UpdatePetRequest {
@@ -12,7 +12,7 @@ public class UpdatePetRequest {
         return name;
     }
 
-    @ApiParam(value = "ID of pet that needs to be updated", required = true)
+    @Parameter(description = "ID of pet that needs to be updated", required = true)
     public void setPetId(@PathVariable("petId") String petId) {
         this.petId = petId;
     }
@@ -21,7 +21,7 @@ public class UpdatePetRequest {
         return status;
     }
 
-    @ApiParam(value = "Updated name of the pet", required = false)
+    @Parameter(description = "Updated name of the pet", required = false)
     public void setName(String name) {
         this.name = name;
     }
@@ -30,7 +30,7 @@ public class UpdatePetRequest {
         return petId;
     }
 
-    @ApiParam(value = "Updated status of the pet", required = false)
+    @Parameter(description = "Updated status of the pet", required = false)
     public void setStatus(String status) {
         this.status = status;
     }

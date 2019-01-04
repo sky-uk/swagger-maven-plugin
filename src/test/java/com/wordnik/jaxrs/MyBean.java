@@ -1,6 +1,7 @@
 package com.wordnik.jaxrs;
 
-import io.swagger.v3.core.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Parameter;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -14,15 +15,15 @@ import java.util.List;
  */
 public class MyBean extends MyParentBean {
 
-    @ApiParam(value = "ID of pet that needs to be updated", required = true)
+    @Parameter(description = "ID of pet that needs to be updated", required = true)
     @PathParam("petId")
     private String petId;
 
-    @ApiParam(value = "Updated name of the pet", required = false, defaultValue = "defaultValue")
+    @Parameter(description = "Updated name of the pet", required = false /* TODO defaultValue = "defaultValue"*/)
     @FormParam("name")
     private String name;
 
-    @ApiParam(value = "Updated status of the pet", required = false, allowableValues = "value1, value2")
+    @Parameter(description = "Updated status of the pet", required = false /* TODO allowableValues = "value1, value2"*/)
     @FormParam("status")
     private String status;
 
@@ -32,7 +33,7 @@ public class MyBean extends MyParentBean {
     @HeaderParam("intValue")
     private int intValue;
 
-    @ApiParam(value = "hidden", hidden = true)
+    @Parameter(description = "hidden", hidden = true)
     @QueryParam(value = "hiddenValue")
     private String hiddenValue;
 
@@ -49,7 +50,7 @@ public class MyBean extends MyParentBean {
     @BeanParam
     private MyConstructorInjectedNestedBean constructorInjectedNestedBean;
 
-    @ApiParam(value = "testIntegerAllowableValues", defaultValue = "25", allowableValues = "25, 50, 100")
+    @Parameter(description = "testIntegerAllowableValues" /* TODO defaultValue = "25", allowableValues = "25, 50, 100" */)
     @QueryParam("testIntegerAllowableValues")
     public Integer testIntegerAllowableValues;
     
